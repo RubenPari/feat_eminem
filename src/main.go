@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/RubenPari/feat-eminem/src/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
@@ -15,9 +16,7 @@ func main() {
 		panic(errEnv)
 	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	routes.SetUpRoutes(app)
 
 	errServer := app.Listen(":" + os.Getenv("PORT"))
 	if errServer != nil {
