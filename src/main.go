@@ -11,7 +11,7 @@ import (
 func main() {
 	app := fiber.New()
 
-	errEnv := godotenv.Load()
+	errEnv := godotenv.Load("../.env")
 	if errEnv != nil {
 		panic(errEnv)
 	}
