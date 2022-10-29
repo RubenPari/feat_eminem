@@ -1,4 +1,4 @@
-module github.com/RubenPari/feat-eminem
+module github.com/RubenPari/feat_eminem
 
 go 1.18
 

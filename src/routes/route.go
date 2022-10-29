@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/RubenPari/feat-eminem/src/controllers/artist"
+	"github.com/RubenPari/feat_eminem/src/controllers/artist"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -3,8 +3,8 @@ package artist
 import (
 	"log"
 
-	"github.com/RubenPari/feat-eminem/src/database"
-	"github.com/RubenPari/feat-eminem/src/models"
+	"github.com/RubenPari/feat_eminem/src/database"
+	"github.com/RubenPari/feat_eminem/src/models"
 	"github.com/zmb3/spotify/v2"
 )
 

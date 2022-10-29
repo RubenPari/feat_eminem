@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/RubenPari/feat-eminem/src/routes"
+	"github.com/RubenPari/feat_eminem/src/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )

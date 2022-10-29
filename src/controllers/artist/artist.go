@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/RubenPari/feat-eminem/src/database/artist"
-	"github.com/RubenPari/feat-eminem/src/models"
-	"github.com/RubenPari/feat-eminem/src/modules/spotify"
+	"github.com/RubenPari/feat_eminem/src/database/artist"
+	"github.com/RubenPari/feat_eminem/src/models"
+	"github.com/RubenPari/feat_eminem/src/modules/spotify"
 	"github.com/gofiber/fiber/v2"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
