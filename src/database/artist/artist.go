@@ -35,3 +35,15 @@ func Add(artist models.Artist) bool {
 
 	return rowsAffected == int64(1)
 }
+
+func Get(id string) models.Artist {
+	db := database.GetDB()
+
+	exist := db.QueryRow("SELECT * FROM artists WHERE id = ?", id)
+
+	var artist models.Artist
+
+	_ = exist.Scan(&artist.Id, &artist.Name, &artist.Uri)
+
+	return artist
+}
