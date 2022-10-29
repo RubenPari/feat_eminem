@@ -1,6 +1,7 @@
 package artist
 
 import (
+	"github.com/RubenPari/feat_eminem/src/database/track"
 	"log"
 	"net/http"
 
@@ -50,10 +51,10 @@ func GetAllSongs(c *fiber.Ctx) error {
 
 	spotifyClient, ctx := spotify.GetClient()
 
-	artist := artist.Get(id)
+	artistObj := artist.Get(id)
 
-	if artist.Id == spotifyAPI.ID("") {
-		c.SendStatus(http.StatusNotFound)
+	if artistObj.Id == spotifyAPI.ID("") {
+		_ = c.SendStatus(http.StatusNotFound)
 		return c.JSON(fiber.Map{
 			"status":  "error",
 			"message": "artist not found",
@@ -66,7 +67,7 @@ func GetAllSongs(c *fiber.Ctx) error {
 	// get all albums
 	albums, err := spotifyClient.GetArtistAlbums(
 		ctx,
-		artist.Id,
+		artistObj.Id,
 		[]spotifyAPI.AlbumType{
 			spotifyAPI.AlbumTypeAlbum,
 			spotifyAPI.AlbumTypeSingle,
@@ -96,19 +97,19 @@ func GetAllSongs(c *fiber.Ctx) error {
 			log.Fatalf("couldn't get album tracks: %v", err)
 		}
 
-		for _, track := range tracks.Tracks {
+		for _, song := range tracks.Tracks {
 			featuringArtists := make([]string, 0)
 
-			for i := 1; i < len(track.Artists); i++ {
-				featuringArtists = append(featuringArtists, track.Artists[i].Name)
+			for i := 1; i < len(song.Artists); i++ {
+				featuringArtists = append(featuringArtists, song.Artists[i].Name)
 			}
 
 			trackObj := models.Track{
-				Id:        track.ID,
-				Name:      track.Name,
-				Uri:       track.URI,
+				Id:        song.ID,
+				Name:      song.Name,
+				Uri:       song.URI,
 				Album:     album.Name,
-				Artist:    track.Artists[0].Name,
+				Artist:    song.Artists[0].Name,
 				Featuring: featuringArtists,
 			}
 
@@ -116,8 +117,22 @@ func GetAllSongs(c *fiber.Ctx) error {
 		}
 	}
 
-	c.SendStatus(http.StatusOK)
-	return c.JSON(tracksObj)
+	// save songs to db
+	success := track.Adds(tracksObj)
+
+	if success {
+		_ = c.SendStatus(http.StatusCreated)
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"message": "songs added",
+		})
+	} else {
+		_ = c.SendStatus(http.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "error adding songs",
+		})
+	}
 }
 
 func GetFeaturedSongs(c *fiber.Ctx) error {
