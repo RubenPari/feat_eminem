@@ -32,13 +32,13 @@ func Add(c *fiber.Ctx) error {
 	success := artist.Add(artistObj)
 
 	if success {
-		c.SendStatus(http.StatusCreated)
+		_ = c.SendStatus(http.StatusCreated)
 		return c.JSON(fiber.Map{
 			"status":  "ok",
 			"message": "artist added",
 		})
 	} else {
-		c.SendStatus(http.StatusInternalServerError)
+		_ = c.SendStatus(http.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"status":  "error",
 			"message": "error adding artist",
@@ -98,10 +98,9 @@ func GetAllSongs(c *fiber.Ctx) error {
 		}
 
 		for _, song := range tracks.Tracks {
-			featuringArtists := make([]string, 0)
-
+			featuringArtists := ""
 			for i := 1; i < len(song.Artists); i++ {
-				featuringArtists = append(featuringArtists, song.Artists[i].Name)
+				featuringArtists += song.Artists[i].Name + ", "
 			}
 
 			trackObj := models.Track{
@@ -136,5 +135,25 @@ func GetAllSongs(c *fiber.Ctx) error {
 }
 
 func GetFeaturedSongs(c *fiber.Ctx) error {
-	return nil
+	id := c.Params("id")
+
+	tracksObj := track.GetAllByArtist(id)
+
+	tracksObj = track.FilterByFeaturing(tracksObj)
+
+	success := track.AddsFeatured(tracksObj)
+
+	if success {
+		_ = c.SendStatus(http.StatusCreated)
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"message": "songs added",
+		})
+	} else {
+		_ = c.SendStatus(http.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "error adding songs",
+		})
+	}
 }
