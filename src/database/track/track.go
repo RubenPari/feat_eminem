@@ -1,11 +1,11 @@
 package track
 
 import (
+	"encoding/json"
 	"github.com/RubenPari/feat_eminem/src/database"
 	"github.com/RubenPari/feat_eminem/src/models"
 	"github.com/joho/godotenv"
 	"github.com/zmb3/spotify/v2"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -97,13 +97,14 @@ func GetAllByArtist(id string) []models.Track {
 		log.Default().Println(errGetName)
 	}
 
-	// TODO: change this to an appropriate way that is more short
 	// extract name of artist from response of type json
-	responseNameBytes, _ := io.ReadAll(responseName.Body)
-	_ = responseName.Body.Close()
-	responseNameString := string(responseNameBytes)
-	_, name, _ := strings.Cut(responseNameString, "{\"name\":\"")
-	name = name[:len(name)-2]
+	type Response struct {
+		Status string `json:"status"`
+		Name   string `json:"name"`
+	}
+	var response Response
+	_ = json.NewDecoder(responseName.Body).Decode(&response)
+	name := response.Name
 
 	rows, err := db.Query("SELECT * FROM tracks WHERE artist = ?", name)
 
