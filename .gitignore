@@ -16,3 +16,9 @@ go.work
 
 # Envirtonment variables
 .env
+
+# VS Code
+.vscode
+
+# JetBrains
+.idea
