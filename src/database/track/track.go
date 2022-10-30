@@ -2,14 +2,15 @@ package track
 
 import (
 	"encoding/json"
-	"github.com/RubenPari/feat_eminem/src/database"
-	"github.com/RubenPari/feat_eminem/src/models"
-	"github.com/joho/godotenv"
-	"github.com/zmb3/spotify/v2"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/RubenPari/feat_eminem/src/database"
+	"github.com/RubenPari/feat_eminem/src/models"
+	"github.com/joho/godotenv"
+	spotifyAPI "github.com/zmb3/spotify/v2"
 )
 
 func Add(track models.Track) bool {
@@ -21,7 +22,7 @@ func Add(track models.Track) bool {
 
 	_ = exist.Scan(&trackFounded.Id, &trackFounded.Name, &trackFounded.Uri)
 
-	if trackFounded.Id != spotify.ID("") {
+	if trackFounded.Id != spotifyAPI.ID("") {
 		log.Default().Println("Track already exists")
 		log.Default().Println(trackFounded)
 		return false

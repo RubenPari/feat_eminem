@@ -3,7 +3,7 @@ package utils
 import (
 	"net/http"
 
-	"github.com/RubenPari/feat_eminem/src/modules/spotify"
+	spotifyMO "github.com/RubenPari/feat_eminem/src/modules/spotify"
 	"github.com/gofiber/fiber/v2"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
@@ -11,7 +11,7 @@ import (
 func GetIdByName(c *fiber.Ctx) error {
 	name := c.Params("name")
 
-	spotifyClient, ctx := spotify.GetClient()
+	spotifyClient, ctx := spotifyMO.GetClient()
 
 	artistApi, err := spotifyClient.Search(ctx, name, spotifyAPI.SearchTypeArtist)
 
@@ -34,7 +34,7 @@ func GetIdByName(c *fiber.Ctx) error {
 func GetNameById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := spotify.GetClient()
+	spotifyClient, ctx := spotifyMO.GetClient()
 
 	artistApi, err := spotifyClient.GetArtist(ctx, spotifyAPI.ID(id))
 

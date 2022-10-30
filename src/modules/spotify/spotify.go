@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/zmb3/spotify/v2"
-	spotifyauth "github.com/zmb3/spotify/v2/auth"
+	spotifyAPI "github.com/zmb3/spotify/v2"
+	spotifyAUTH "github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-func GetClient() (*spotify.Client, context.Context) {
+func GetClient() (*spotifyAPI.Client, context.Context) {
 
 	ctx := context.Background()
 
@@ -30,6 +30,6 @@ func GetClient() (*spotify.Client, context.Context) {
 	}
 
 	// create spotify client
-	httpClient := spotifyauth.New().Client(ctx, token)
-	return spotify.New(httpClient), ctx
+	httpClient := spotifyAUTH.New().Client(ctx, token)
+	return spotifyAPI.New(httpClient), ctx
 }

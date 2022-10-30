@@ -1,13 +1,14 @@
 package artist
 
 import (
-	"github.com/RubenPari/feat_eminem/src/database/track"
 	"log"
 	"net/http"
 
-	"github.com/RubenPari/feat_eminem/src/database/artist"
+	trackDB "github.com/RubenPari/feat_eminem/src/database/track"
+
+	artistDB "github.com/RubenPari/feat_eminem/src/database/artist"
 	"github.com/RubenPari/feat_eminem/src/models"
-	"github.com/RubenPari/feat_eminem/src/modules/spotify"
+	spotifyMO "github.com/RubenPari/feat_eminem/src/modules/spotify"
 	"github.com/gofiber/fiber/v2"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
@@ -15,7 +16,7 @@ import (
 func Add(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := spotify.GetClient()
+	spotifyClient, ctx := spotifyMO.GetClient()
 
 	artistApi, err := spotifyClient.GetArtist(ctx, spotifyAPI.ID(id))
 
@@ -29,7 +30,7 @@ func Add(c *fiber.Ctx) error {
 		Uri:  artistApi.URI,
 	}
 
-	success := artist.Add(artistObj)
+	success := artistDB.Add(artistObj)
 
 	if success {
 		_ = c.SendStatus(http.StatusCreated)
@@ -49,9 +50,9 @@ func Add(c *fiber.Ctx) error {
 func GetAllSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := spotify.GetClient()
+	spotifyClient, ctx := spotifyMO.GetClient()
 
-	artistObj := artist.Get(id)
+	artistObj := artistDB.Get(id)
 
 	if artistObj.Id == spotifyAPI.ID("") {
 		_ = c.SendStatus(http.StatusNotFound)
@@ -117,7 +118,7 @@ func GetAllSongs(c *fiber.Ctx) error {
 	}
 
 	// save songs to db
-	success := track.Adds(tracksObj)
+	success := trackDB.Adds(tracksObj)
 
 	if success {
 		_ = c.SendStatus(http.StatusCreated)
@@ -137,12 +138,11 @@ func GetAllSongs(c *fiber.Ctx) error {
 func GetFeaturedSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	tracksObj := track.GetAllByArtist(id)
+	tracksObj := trackDB.GetAllByArtist(id)
 
-	// TODO: change all import with name "name" to "nameDB"
-	tracksFiltersObj := track.FilterByFeaturing(tracksObj)
+	tracksFiltersObj := trackDB.FilterByFeaturing(tracksObj)
 
-	success := track.AddsFeatured(tracksFiltersObj)
+	success := trackDB.AddsFeatured(tracksFiltersObj)
 
 	if success {
 		_ = c.SendStatus(http.StatusCreated)
