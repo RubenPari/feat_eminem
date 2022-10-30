@@ -139,9 +139,10 @@ func GetFeaturedSongs(c *fiber.Ctx) error {
 
 	tracksObj := track.GetAllByArtist(id)
 
-	tracksObj = track.FilterByFeaturing(tracksObj)
+	// TODO: change all import with name "name" to "nameDB"
+	tracksFiltersObj := track.FilterByFeaturing(tracksObj)
 
-	success := track.AddsFeatured(tracksObj)
+	success := track.AddsFeatured(tracksFiltersObj)
 
 	if success {
 		_ = c.SendStatus(http.StatusCreated)
