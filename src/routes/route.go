@@ -1,24 +1,25 @@
 package routes
 
 import (
-	"github.com/RubenPari/feat_eminem/src/controllers/artist"
-	"github.com/RubenPari/feat_eminem/src/controllers/utils"
+	artistContr "github.com/RubenPari/feat_eminem/src/controllers/artist"
+	utilsContr "github.com/RubenPari/feat_eminem/src/controllers/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 func SetUpRoutes(app *fiber.App) {
-	// TODO: implement group routes
-	app.Post("/artist/add/:id", artist.Add)
+	artist := app.Group("/artist")
 
+	artist.Post("/add/:id", artistContr.Add)
 	// get all songs of a specific artist
 	// and add them to the database
-	app.Get("/artist/get-all-songs/:id", artist.GetAllSongs)
-
+	artist.Get("/get-all-songs/:id", artistContr.GetAllSongs)
 	// filters all songs of a specific artist
 	// where Eminem is featured
 	// and add them to the database
-	app.Put("/artist/get-featured-songs/:id", artist.GetFeaturedSongs)
+	artist.Put("/get-featured-songs/:id", artistContr.GetFeaturedSongs)
 
-	app.Get("/utils/artist/get-id/:name", utils.GetIdByName)
-	app.Get("/utils/artist/get-name/:id", utils.GetNameById)
+	utils := app.Group("/utils")
+
+	utils.Get("/artist/get-id/:name", utilsContr.GetIdByName)
+	utils.Get("/artist/get-name/:id", utilsContr.GetNameById)
 }
