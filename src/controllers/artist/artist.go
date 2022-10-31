@@ -47,6 +47,29 @@ func Add(c *fiber.Ctx) error {
 	}
 }
 
+func CheckIfSaved(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	artistObj := artistDB.Get(id)
+
+	if artistObj.Id == ("") {
+		_ = c.SendStatus(http.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "artist not found",
+		})
+	}
+
+	_ = c.SendStatus(http.StatusOK)
+	return c.JSON(fiber.Map{
+		"status":  "ok",
+		"message": "artist found",
+	})
+}
+
+// GetAllSongs get all songs of
+// a specific artist
+// and add them to the database
 func GetAllSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -54,7 +77,7 @@ func GetAllSongs(c *fiber.Ctx) error {
 
 	artistObj := artistDB.Get(id)
 
-	if artistObj.Id == spotifyAPI.ID("") {
+	if artistObj.Id == ("") {
 		_ = c.SendStatus(http.StatusNotFound)
 		return c.JSON(fiber.Map{
 			"status":  "error",
@@ -135,6 +158,10 @@ func GetAllSongs(c *fiber.Ctx) error {
 	}
 }
 
+// GetFeaturedSongs filters all songs of
+// a specific artist
+// where Eminem is featured
+// and add them to the database
 func GetFeaturedSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -155,6 +182,42 @@ func GetFeaturedSongs(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":  "error",
 			"message": "error adding songs",
+		})
+	}
+}
+
+func Delete(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	artistObj := artistDB.Get(id)
+
+	if artistObj.Id == ("") {
+		_ = c.SendStatus(http.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "artist not found",
+		})
+	}
+
+	artistDeleted := artistDB.Delete(id)
+
+	// delete all songs of the artist in tracks_feat
+	featuringDeleted := trackDB.DeleteAllByFeaturing(id)
+
+	// delete all songs of the artist in tracks
+	tracksDeleted := trackDB.DeleteAllByArtist(id)
+
+	if artistDeleted && featuringDeleted && tracksDeleted {
+		_ = c.SendStatus(http.StatusOK)
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"message": "artist deleted",
+		})
+	} else {
+		_ = c.SendStatus(http.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "error deleting artist",
 		})
 	}
 }

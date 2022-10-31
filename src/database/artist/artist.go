@@ -47,3 +47,19 @@ func Get(id string) models.Artist {
 
 	return artist
 }
+
+func Delete(id string) bool {
+	db := database.GetDB()
+
+	result, err := db.Exec("DELETE FROM artists WHERE id = ?", id)
+
+	if err != nil {
+		log.Default().Println("Error deleting artist")
+		log.Default().Println(err)
+		return false
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+
+	return rowsAffected == int64(1)
+}

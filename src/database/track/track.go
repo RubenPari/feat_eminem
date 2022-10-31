@@ -2,6 +2,7 @@ package track
 
 import (
 	"encoding/json"
+	"github.com/RubenPari/feat_eminem/src/modules/client"
 	"log"
 	"net/http"
 	"os"
@@ -85,6 +86,28 @@ func AddsFeatured(tracks []models.Track) bool {
 	return success
 }
 
+func FilterByFeaturing(tracks []models.Track) []models.Track {
+	var tracksFiltered []models.Track
+
+	for i := 0; i < len(tracks); i++ {
+		if IsFeaturing(tracks[i]) {
+			tracksFiltered = append(tracksFiltered, tracks[i])
+		}
+	}
+
+	return tracksFiltered
+}
+
+func IsFeaturing(track models.Track) bool {
+	artistsFeaturing := track.Featuring
+
+	if strings.Contains(artistsFeaturing, "Eminem") {
+		return true
+	} else {
+		return false
+	}
+}
+
 func GetAllByArtist(id string) []models.Track {
 	db := database.GetDB()
 
@@ -125,24 +148,48 @@ func GetAllByArtist(id string) []models.Track {
 	return tracks
 }
 
-func IsFeaturing(track models.Track) bool {
-	artistsFeaturing := track.Featuring
+// DeleteAllByArtist delete all songs
+// in tracks table with specific artist
+func DeleteAllByArtist(id string) bool {
+	db := database.GetDB()
 
-	if strings.Contains(artistsFeaturing, "Eminem") {
-		return true
-	} else {
+	nameArtist, errNameArtist := client.GetNameArtistById(id)
+	if errNameArtist != nil {
+		log.Default().Println("Error getting name of artist")
+		log.Default().Println(errNameArtist)
 		return false
+	}
+
+	_, err := db.Exec("DELETE FROM tracks WHERE artist = ?", nameArtist)
+
+	if err != nil {
+		log.Default().Println("Error deleting all tracks")
+		log.Default().Println(err)
+		return false
+	} else {
+		return true
 	}
 }
 
-func FilterByFeaturing(tracks []models.Track) []models.Track {
-	var tracksFiltered []models.Track
+// DeleteAllByFeaturing delete all songs
+// in tracks_feat table with specific artist
+func DeleteAllByFeaturing(id string) bool {
+	db := database.GetDB()
 
-	for i := 0; i < len(tracks); i++ {
-		if IsFeaturing(tracks[i]) {
-			tracksFiltered = append(tracksFiltered, tracks[i])
-		}
+	nameArtist, errNameArtist := client.GetNameArtistById(id)
+	if errNameArtist != nil {
+		log.Default().Println("Error getting name of artist")
+		log.Default().Println(errNameArtist)
+		return false
 	}
 
-	return tracksFiltered
+	_, err := db.Exec("DELETE FROM tracks_feat WHERE artist = ?", nameArtist)
+
+	if err != nil {
+		log.Default().Println("Error deleting all tracks")
+		log.Default().Println(err)
+		return false
+	} else {
+		return true
+	}
 }

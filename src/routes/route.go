@@ -10,12 +10,9 @@ func SetUpRoutes(app *fiber.App) {
 	artist := app.Group("/artist")
 
 	artist.Post("/add/:id", artistCONTR.Add)
-	// get all songs of a specific artist
-	// and add them to the database
+	artist.Get("/check-if-saved/:id", artistCONTR.CheckIfSaved)
+	artist.Delete("/delete/:id", artistCONTR.Delete)
 	artist.Get("/get-all-songs/:id", artistCONTR.GetAllSongs)
-	// filters all songs of a specific artist
-	// where Eminem is featured
-	// and add them to the database
 	artist.Put("/get-featured-songs/:id", artistCONTR.GetFeaturedSongs)
 
 	utils := app.Group("/utils")
