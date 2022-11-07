@@ -127,16 +127,22 @@ func GetAllSongs(c *fiber.Ctx) error {
 				featuringArtists += song.Artists[i].Name + ", "
 			}
 
-			trackObj := models.Track{
-				Id:        song.ID,
-				Name:      song.Name,
-				Uri:       song.URI,
-				Album:     album.Name,
-				Artist:    song.Artists[0].Name,
-				Featuring: featuringArtists,
-			}
+			// check if first artist is the artist
+			// we are looking for
+			if song.Artists[0].Name == artistObj.Name {
+				log.Default().Println("first artist is the artist we are looking for")
 
-			tracksObj = append(tracksObj, trackObj)
+				trackObj := models.Track{
+					Id:        song.ID,
+					Name:      song.Name,
+					Uri:       song.URI,
+					Album:     album.Name,
+					Artist:    song.Artists[0].Name,
+					Featuring: featuringArtists,
+				}
+
+				tracksObj = append(tracksObj, trackObj)
+			}
 		}
 	}
 

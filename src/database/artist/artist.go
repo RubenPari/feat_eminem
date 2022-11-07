@@ -5,7 +5,6 @@ import (
 
 	"github.com/RubenPari/feat_eminem/src/database"
 	"github.com/RubenPari/feat_eminem/src/models"
-	spotifyAPI "github.com/zmb3/spotify/v2"
 )
 
 func Add(artist models.Artist) bool {
@@ -17,7 +16,7 @@ func Add(artist models.Artist) bool {
 
 	_ = exist.Scan(&artistFounded.Id, &artistFounded.Name, &artistFounded.Uri)
 
-	if artistFounded.Id != spotifyAPI.ID("") {
+	if artistFounded.Id != ("") {
 		log.Default().Println("Artist already exists")
 		log.Default().Println(artistFounded)
 		return false
@@ -43,7 +42,7 @@ func Get(id string) models.Artist {
 
 	var artist models.Artist
 
-	_ = exist.Scan(&artist.Id, &artist.Name, &artist.Uri)
+	_ = exist.Scan(&artist.Id, &artist.Uri, &artist.Name)
 
 	return artist
 }
