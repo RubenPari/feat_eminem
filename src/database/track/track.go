@@ -2,15 +2,15 @@ package track
 
 import (
 	"encoding/json"
-	"github.com/RubenPari/feat_eminem/src/modules/client"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/RubenPari/feat_eminem/src/modules/client"
+
 	"github.com/RubenPari/feat_eminem/src/database"
 	"github.com/RubenPari/feat_eminem/src/models"
-	"github.com/joho/godotenv"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
 
@@ -111,7 +111,6 @@ func IsFeaturing(track models.Track) bool {
 func GetAllByArtist(id string) []models.Track {
 	db := database.GetDB()
 
-	_ = godotenv.Load()
 	port := os.Getenv("PORT")
 
 	// get name of artist by id with endpoint

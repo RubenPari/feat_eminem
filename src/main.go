@@ -5,16 +5,10 @@ import (
 
 	"github.com/RubenPari/feat_eminem/src/routes"
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	app := fiber.New()
-
-	errEnv := godotenv.Load("../.env")
-	if errEnv != nil {
-		panic(errEnv)
-	}
 
 	routes.SetUpRoutes(app)
 

@@ -2,7 +2,6 @@ package client
 
 import (
 	"encoding/json"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +10,6 @@ import (
 // GetNameArtistById
 // call to endpoint to get name of artist by id
 func GetNameArtistById(id string) (string, error) {
-	_ = godotenv.Load()
 	port := os.Getenv("PORT")
 
 	// get name of artist by id with endpoint
