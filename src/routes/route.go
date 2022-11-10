@@ -2,6 +2,7 @@ package routes
 
 import (
 	artistCONTR "github.com/RubenPari/feat_eminem/src/controllers/artist"
+	authCONTR "github.com/RubenPari/feat_eminem/src/controllers/auth"
 	utilsCONTR "github.com/RubenPari/feat_eminem/src/controllers/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,4 +20,9 @@ func SetUpRoutes(app *fiber.App) {
 
 	utils.Get("/artist/get-id/:name", utilsCONTR.GetIdByName)
 	utils.Get("/artist/get-name/:id", utilsCONTR.GetNameById)
+
+	auth := app.Group("/auth")
+
+	auth.Get("/login", authCONTR.Login)
+	auth.Get("/callback", authCONTR.Callback)
 }
