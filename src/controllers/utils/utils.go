@@ -15,7 +15,7 @@ import (
 	spotifyAUTH "golang.org/x/oauth2/spotify"
 )
 
-// loadEnv loads environment
+// LoadEnv loads environment
 // variables from .env file
 // in the root directory
 // upDir: number of directories
@@ -105,5 +105,4 @@ func GetOAuthConfig() (*oauth2.Config, string) {
 		Scopes:       []string{"user-read-private", "user-read-email"},
 		Endpoint:     spotifyAUTH.Endpoint,
 	}, GenerateStateString()
-
 }
