@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"net/http"
 
 	authMO "github.com/RubenPari/feat_eminem/src/modules/auth"
@@ -11,7 +12,8 @@ import (
 func GetIdByName(c *fiber.Ctx) error {
 	name := c.Params("name")
 
-	spotifyClient, ctx := authMO.GetClient()
+	spotifyClient := authMO.SpotifyClient
+	ctx := context.Background()
 
 	artistApi, err := spotifyClient.Search(ctx, name, spotifyAPI.SearchTypeArtist)
 
@@ -34,7 +36,8 @@ func GetIdByName(c *fiber.Ctx) error {
 func GetNameById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := authMO.GetClient()
+	spotifyClient := authMO.SpotifyClient
+	ctx := context.Background()
 
 	artistApi, err := spotifyClient.GetArtist(ctx, spotifyAPI.ID(id))
 

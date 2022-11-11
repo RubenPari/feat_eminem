@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"github.com/gofiber/fiber/v2/middleware/session"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 	spotifyAUTH "github.com/zmb3/spotify/v2/auth"
 	"log"
@@ -52,31 +51,8 @@ func Callback(c *fiber.Ctx) error {
 	// create spotify http client
 	spotifyClient := spotifyAPI.New(httpClient)
 
-	// save spotify client in session
-	store := session.New()
-	sess, errSess := store.Get(c)
-
-	if errSess != nil {
-		log.Printf("Error getting session: %s", errSess)
-		_ = c.SendStatus(http.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"status": "error",
-			"error":  "Error getting session",
-		})
-	}
-
-	sess.Set("spotifyClient", spotifyClient)
-
-	errSave := sess.Save()
-
-	if errSave != nil {
-		log.Printf("Error saving session: %s", errSave)
-		_ = c.SendStatus(http.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"status": "error",
-			"error":  "Error saving session",
-		})
-	}
+	// export spotify client to modules
+	authMO.SpotifyClient = spotifyClient
 
 	resp, err := spotifyClient.CurrentUser(context.Background())
 

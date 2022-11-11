@@ -1,6 +1,7 @@
 package artist
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -13,12 +14,11 @@ import (
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
 
-// Add TODO: change all spotifyClient declarations
-// with spotifyClient saved in session
 func Add(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := authMO.GetClient()
+	spotifyClient := authMO.SpotifyClient
+	ctx := context.Background()
 
 	artistApi, err := spotifyClient.GetArtist(ctx, spotifyAPI.ID(id))
 
@@ -75,7 +75,8 @@ func CheckIfSaved(c *fiber.Ctx) error {
 func GetAllSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := authMO.GetClient()
+	spotifyClient := authMO.SpotifyClient
+	ctx := context.Background()
 
 	artistObj := artistDB.Get(id)
 
