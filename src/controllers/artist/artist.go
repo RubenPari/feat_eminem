@@ -8,15 +8,17 @@ import (
 
 	artistDB "github.com/RubenPari/feat_eminem/src/database/artist"
 	"github.com/RubenPari/feat_eminem/src/models"
-	spotifyMO "github.com/RubenPari/feat_eminem/src/modules/spotify"
+	authMO "github.com/RubenPari/feat_eminem/src/modules/auth"
 	"github.com/gofiber/fiber/v2"
 	spotifyAPI "github.com/zmb3/spotify/v2"
 )
 
+// Add TODO: change all spotifyClient declarations
+// with spotifyClient saved in session
 func Add(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := spotifyMO.GetClient()
+	spotifyClient, ctx := authMO.GetClient()
 
 	artistApi, err := spotifyClient.GetArtist(ctx, spotifyAPI.ID(id))
 
@@ -73,7 +75,7 @@ func CheckIfSaved(c *fiber.Ctx) error {
 func GetAllSongs(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	spotifyClient, ctx := spotifyMO.GetClient()
+	spotifyClient, ctx := authMO.GetClient()
 
 	artistObj := artistDB.Get(id)
 

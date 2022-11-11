@@ -2,18 +2,18 @@ package auth
 
 import (
 	"context"
-	"io"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	spotifyAPI "github.com/zmb3/spotify/v2"
+	spotifyAUTH "github.com/zmb3/spotify/v2/auth"
 	"log"
 	"net/http"
 
-	"github.com/RubenPari/feat_eminem/src/controllers/utils"
+	authMO "github.com/RubenPari/feat_eminem/src/modules/auth"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/oauth2"
 )
 
 var (
-	oauthConf, stateGlobal = utils.GetOAuthConfig()
-	AccessToken            = &oauth2.Token{}
+	oauthConf, stateGlobal = authMO.GetOAuthConfig()
 )
 
 func Login(c *fiber.Ctx) error {
@@ -46,12 +46,39 @@ func Callback(c *fiber.Ctx) error {
 		})
 	}
 
-	// save token to session
-	AccessToken = token
+	// create http client
+	httpClient := spotifyAUTH.New().Client(context.Background(), token)
 
-	client := oauthConf.Client(context.Background(), token)
+	// create spotify http client
+	spotifyClient := spotifyAPI.New(httpClient)
 
-	resp, err := client.Get("https://api.spotify.com/v1/me")
+	// save spotify client in session
+	store := session.New()
+	sess, errSess := store.Get(c)
+
+	if errSess != nil {
+		log.Printf("Error getting session: %s", errSess)
+		_ = c.SendStatus(http.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"status": "error",
+			"error":  "Error getting session",
+		})
+	}
+
+	sess.Set("spotifyClient", spotifyClient)
+
+	errSave := sess.Save()
+
+	if errSave != nil {
+		log.Printf("Error saving session: %s", errSave)
+		_ = c.SendStatus(http.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"status": "error",
+			"error":  "Error saving session",
+		})
+	}
+
+	resp, err := spotifyClient.CurrentUser(context.Background())
 
 	if err != nil {
 		_ = c.SendStatus(http.StatusUnauthorized)
@@ -61,13 +88,10 @@ func Callback(c *fiber.Ctx) error {
 		})
 	}
 
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
-	}(resp.Body)
-
 	_ = c.SendStatus(http.StatusOK)
 	return c.JSON(fiber.Map{
-		"status":  "success",
-		"message": "login successful",
+		"status":       "success",
+		"message":      "login successful",
+		"current_user": resp,
 	})
 }
